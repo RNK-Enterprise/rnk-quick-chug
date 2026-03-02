@@ -5,7 +5,12 @@ All notable changes to the RNK Quick Chug module will be documented in this file
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.2.3] - 2026-06-10
+## [1.2.4] - 2026-03-02
+
+### Fixed
+- Corrected the action economy suppression introduced in v1.2.3. Setting activation type to `""` caused dnd5e to fail its activation validation and abort the use entirely — no quantity was consumed and no chat card was generated. Fixed by using `"none"` (a valid dnd5e activation type meaning "no action cost required") instead of an empty string. Belt item use now correctly: consumes item quantity, generates a chat card, applies effects, and does not decrement action/bonus-action pips.
+
+## [1.2.3] - 2026-03-02
 
 ### Fixed
 - Belt item use no longer consumes an action economy resource in Argon Combat HUD or the dnd5e combat tracker. A one-time `dnd5e.preUseActivity` hook intercepts the activation cost before `item.use()` fires and blanks the activation type, so action/bonus-action pips are not decremented. Quantity, chat card, and item effects still process normally.

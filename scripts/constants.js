@@ -18,13 +18,18 @@ export async function useItemFree(item) {
   let hookId;
   hookId = Hooks.on("dnd5e.preUseActivity", (_activity, config) => {
     Hooks.off("dnd5e.preUseActivity", hookId);
-    // Blank the activation type so dnd5e does not record an action/bonus-action spend.
-    if (config?.activation) config.activation.type = "";
+    hookId = null;
+    // Override activation type to "none" — a valid dnd5e type meaning "no action
+    // cost required". This prevents the action/bonus-action pip from being spent
+    // while still allowing quantity consumption, chat card, and item effects.
+    if (!config.activation) config.activation = {};
+    config.activation.type = "none";
+    config.activation.cost = null;
   });
   try {
     await item.use();
   } finally {
     // Safety: remove hook if item.use() threw before preUseActivity fired.
-    Hooks.off("dnd5e.preUseActivity", hookId);
+    if (hookId !== null) Hooks.off("dnd5e.preUseActivity", hookId);
   }
 }
