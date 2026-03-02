@@ -1,0 +1,16 @@
+<form class="rnk-qc-app">
+    <div class="qc-grid">
+        {{#each slots}}
+        <div class="qc-slot {{#if item}}has-item{{else}}empty{{/if}}" data-slot-index="{{index}}" title="{{name}}">
+            <div class="qc-icon">
+                <img src="{{img}}" alt="{{name}}" />
+                {{#if item}}
+                <div class="qc-count">{{item.system.quantity}}</div>
+                <div class="qc-clear-btn" title="Clear Slot"><i class="fas fa-times-circle"></i></div>
+                {{/if}}
+            </div>
+            <div class="qc-label">{{name}}</div>
+        </div>
+        {{/each}}
+    </div>
+</form>

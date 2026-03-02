@@ -1,0 +1,24 @@
+<section class="rnk-quick-chug-belt-container">
+  <div class="qc-header">
+    <h3>{{localize "rnk-quick-chug.title"}}</h3>
+    <span>{{localize "rnk-quick-chug.subtitle"}}</span>
+  </div>
+  
+  <div class="qc-belt-grid">
+    {{#each slots as |slot index|}}
+    <div class="qc-slot" data-slot-index="{{index}}" draggable="false">
+      {{#if slot.item}}
+      <div class="qc-slot-content filled">
+        <img src="{{slot.item.img}}" title="{{slot.item.name}}" draggable="false">
+        <span class="qc-item-qty">x{{slot.item.system.quantity}}</span>
+      </div>
+      <button class="qc-clear-btn" title="Clear Slot">×</button>
+      {{else}}
+      <div class="qc-slot-content empty">
+        <i class="fas fa-plus"></i>
+      </div>
+      {{/if}}
+    </div>
+    {{/each}}
+  </div>
+</section>

@@ -1,0 +1,47 @@
+{
+  "id": "rnk-quick-chug",
+  "title": "RNK Quick Chug",
+  "description": "Premium Foundry VTT v13 Bonus Action Potion Belt. Assign consumables to quick-access slots and use them instantly in combat.",
+  "version": "1.0.0",
+  "authors": [
+    {
+      "name": "The Curator",
+      "url": "https://www.patreon.com/RagNaroks"
+    }
+  ],
+  "url": "https://github.com/RNK-Enterprise/rnk-quick-chug",
+  "bugs": "https://github.com/RNK-Enterprise/rnk-quick-chug/issues",
+  "changelog": "https://github.com/RNK-Enterprise/rnk-quick-chug/releases",
+  "license": "RNK-PROPRIETARY",
+  "readme": "https://github.com/RNK-Enterprise/rnk-quick-chug/blob/main/README.md",
+  "compatibility": {
+    "minimum": 13,
+    "verified": 13
+  },
+  "esmodules": [
+    "scripts/main.js"
+  ],
+  "styles": [
+    "styles/rnk-quick-chug.css"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "relationships": {
+    "requires": [],
+    "recommends": [
+      {
+        "id": "lib-wrapper",
+        "type": "module"
+      },
+      {
+        "id": "enhancedcombathud",
+        "type": "module"
+      }
+    ]
+  }
+}

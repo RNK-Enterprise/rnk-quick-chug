@@ -1,0 +1,23 @@
+{
+  "rnk-quick-chug.title": "RNK Quick Chug",
+  "rnk-quick-chug.description": "A bonus action potion quick-access system for faster potion consumption in combat",
+  "rnk-quick-chug.subtitle": "Bonus Action Potions",
+  "rnk-quick-chug.dragPrompt": "Drag potion here",
+  "rnk-quick-chug.usePrompt": "Click to use as bonus action",
+  "rnk-quick-chug.removePrompt": "Remove from quick chug",
+  "rnk-quick-chug.clearBtn": "×",
+  "rnk-quick-chug.empty": "Empty",
+  "rnk-quick-chug.info": "Drag consumables from inventory to assign. Click to use as bonus action.",
+  "rnk-quick-chug.notification.added": "Added {itemName} to quick chug slot {slot}",
+  "rnk-quick-chug.notification.removed": "Removed from quick chug slot {slot}",
+  "rnk-quick-chug.notification.used": "Used {itemName} from quick chug slot {slot}",
+  "rnk-quick-chug.notification.failed": "Failed to use {itemName}",
+  "rnk-quick-chug.notification.emptySlot": "That quick chug slot is empty.",
+  "rnk-quick-chug.notification.invalidItem": "{itemName} is not a consumable/potion",
+  "rnk-quick-chug.notification.noQuantity": "{itemName} has no quantity",
+  "rnk-quick-chug.settings.enableArgon.name": "Enable Argon Integration",
+  "rnk-quick-chug.settings.enableArgon.hint": "Mark quick chug potions as bonus actions in Argon Combat HUD",
+  "rnk-quick-chug.settings.debugMode.name": "Debug Mode",
+  "rnk-quick-chug.settings.debugMode.hint": "Log debug messages to console",
+  "rnk-quick-chug.manifest": "RNK Quick Chug Module"
+}
