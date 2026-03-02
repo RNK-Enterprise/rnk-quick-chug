@@ -1,6 +1,6 @@
 {
   "name": "rnk-quick-chug",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "A bonus action potion quick-access system for faster, more heroic potion use in combat.",
   "main": "scripts/main.js",
   "type": "module",

@@ -1,4 +1,7 @@
 <form class="rnk-qc-app">
+    {{#if error}}
+    <div class="qc-error">{{error}}</div>
+    {{/if}}
     <div class="qc-grid">
         {{#each slots}}
         <div class="qc-slot {{#if item}}has-item{{else}}empty{{/if}}" data-slot-index="{{index}}" title="{{name}}">

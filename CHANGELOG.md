@@ -95,6 +95,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Requires modern browser with ES2021 support
 - No hotkey support yet (coming in v1.1.0)
 
+## [1.2.1] - 2026-03-02
+
+### Fixed
+- **Belt app blank for clients**: The belt window opened but showed no slots for players who don't have a Primary Character assigned in User Configuration. The actor is now resolved dynamically — `game.user.character` first, then the currently controlled token's actor as fallback. The window now works for all clients.
+- **Silent failure on null actor**: `_prepareContext()` now returns `{ slots: [], error: "..." }` instead of `{ error: "..." }`, so the Handlebars template always has a `slots` array to iterate and correctly displays an inline message instead of a silent blank grid.
+
+---
+
 ## [1.2.0] - 2026-03-02
 
 ### Fixed
@@ -150,5 +158,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 **Last Updated**: March 2, 2026
-**Current Version**: 1.2.0
+**Current Version**: 1.2.1
 **Status**: Production Ready (GA Release)

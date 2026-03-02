@@ -71,6 +71,14 @@
     padding: 10px;
 }
 
+.qc-error {
+    color: var(--color-text-warning, #a33);
+    font-size: 0.85em;
+    text-align: center;
+    padding: 4px 8px 8px;
+    opacity: 0.8;
+}
+
 .qc-grid {
     display: flex;
     flex-wrap: wrap;

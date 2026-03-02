@@ -34,12 +34,19 @@ export class QuickChugApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
   constructor(options = {}) {
     super(options);
-    this.actor = game.user.character;
+  }
+
+  /**
+   * Resolve actor: primary character first, then currently controlled token.
+   * This ensures clients without a Primary Character set still work.
+   */
+  get actor() {
+    return game.user.character ?? canvas.tokens?.controlled?.[0]?.actor ?? null;
   }
 
   async _prepareContext() {
     if (!this.actor) {
-      return { error: "No primary character assigned." };
+      return { slots: [], error: "Select a token or assign a Primary Character." };
     }
 
     const flagData = this.actor.getFlag(MODULE_ID, "slots") || Array(BELT_SLOTS).fill(null);
