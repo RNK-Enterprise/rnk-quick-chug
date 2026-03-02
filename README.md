@@ -267,7 +267,7 @@ See [LICENSE](LICENSE) file for details.
 
 ### Special Thanks
 
-**Nijotu** (Netherlands) — The original idea for RNK Quick Chug came from Nijotu on Discord. His feedback and vision for a fast, no-fuss potion belt directly inspired this module. Much appreciated from across the Atlantic! 🇳🇱
+**Nijotu** (Belgium/Netherlands) — The original idea for RNK Quick Chug came from Nijotu on Discord. His feedback and vision for a fast, no-fuss potion belt directly inspired this module. Much appreciated from across the Atlantic! 🇧🇪🇳🇱
 
 ## Contributing
 
