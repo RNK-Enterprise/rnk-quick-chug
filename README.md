@@ -240,7 +240,7 @@ Currently supports English. Translation contributions welcome!
 ## Support
 
 ### Report Issues
-GitHub Issues: https://github.com/theRNKcurator/rnk-quick-chug/issues
+GitHub Issues: https://github.com/RNK-Enterprise/rnk-quick-chug/issues
 
 ### Get Help
 - Discord: [RNK Community](https://discord.gg/rnk-community)
