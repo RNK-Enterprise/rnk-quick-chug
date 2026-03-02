@@ -16,20 +16,24 @@ export const BELT_SLOTS = 5;
  */
 export async function useItemFree(item) {
   let hookId;
-  hookId = Hooks.on("dnd5e.preUseActivity", (_activity, config) => {
+  hookId = Hooks.on("dnd5e.preUseActivity", (_activity, usageConfig) => {
     Hooks.off("dnd5e.preUseActivity", hookId);
     hookId = null;
-    // Override activation type to "none" — a valid dnd5e type meaning "no action
-    // cost required". This prevents the action/bonus-action pip from being spent
-    // while still allowing quantity consumption, chat card, and item effects.
-    if (!config.activation) config.activation = {};
-    config.activation.type = "none";
-    config.activation.cost = null;
+    // dnd5e calls _prepareUsageConfig() BEFORE firing this hook, which means
+    // usageConfig.consume.action is already set to true for action/bonus items.
+    // Changing activation.type here is too late — we must directly override
+    // consume.action so dnd5e's consume() step skips the action-economy deduction
+    // while still processing quantity, chat card, and effects normally.
+    if (usageConfig.consume && typeof usageConfig.consume === "object") {
+      usageConfig.consume.action = false;
+    } else if (usageConfig.consume !== false) {
+      usageConfig.consume = { action: false };
+    }
   });
   try {
     await item.use();
   } finally {
     // Safety: remove hook if item.use() threw before preUseActivity fired.
-    if (hookId !== null) Hooks.off("dnd5e.preUseActivity", hookId);
+    if (hookId != null) Hooks.off("dnd5e.preUseActivity", hookId);
   }
 }

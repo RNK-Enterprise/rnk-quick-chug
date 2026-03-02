@@ -5,6 +5,11 @@ All notable changes to the RNK Quick Chug module will be documented in this file
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.5] - 2026-03-02
+
+### Fixed
+- Action economy suppression now correctly prevents Argon Combat HUD action/bonus-action pips from being spent when using belt items. Root cause: dnd5e calls `_prepareUsageConfig()` *before* firing `dnd5e.preUseActivity`, so `usageConfig.consume.action` is already `true` by the time our hook runs — changing `activation.type` in the hook had no effect. Fix: directly set `usageConfig.consume.action = false` in the hook, which dnd5e's `consume()` step reads to skip action-economy deduction. Item quantity, chat card, and effects all still process normally.
+
 ## [1.2.4] - 2026-03-02
 
 ### Fixed
