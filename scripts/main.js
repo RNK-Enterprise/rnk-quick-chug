@@ -65,10 +65,13 @@ class QuickChugEngine {
   }
 }
 
+// Register argon hook listener at top level — MUST happen before
+// enhancedcombathud's init fires argonInit, so we can't wait for our own init.
+registerArgonIntegration();
+
 // Hooks Interface
 Hooks.once("init", () => {
   QuickChugEngine.init();
-  if (game.modules.get("enhancedcombathud")?.active) registerArgonIntegration();
 });
 
 Hooks.on("getSceneControlButtons", (controls) => {

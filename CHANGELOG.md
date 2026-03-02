@@ -95,25 +95,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Requires modern browser with ES2021 support
 - No hotkey support yet (coming in v1.1.0)
 
-## [1.1.0] - Planned
+## [1.2.0] - 2026-03-02
 
-### Planned Features
-- Configurable number of quick-access slots (3-10)
-- Argon Combat HUD integration
-- Settings panel for customization
-- Per-character belt presets
-- Hotkey support for quick actions
-- Improved mobile UI
+### Fixed
+- **Argon Combat HUD**: Belt now correctly appears as a single bonus action button in Argon's HUD panel. Previously, individual items inside the belt were each injected as separate bonus action buttons. The belt itself is now the bonus action — clicking it opens the Quick Chug belt app for the player to select an item.
 
-## [1.2.0] - Planned
+### Changed
+- Argon integration rewritten to use `CoreHud.defineMainPanels()` — the official Argon API — instead of post-render DOM injection, ensuring full Argon lifecycle compatibility.
+- Belt button icon updated to use `modules/enhancedcombathud/icons/drink-me.webp` (a real image URL as required by Argon's `ActionButton` rendering engine).
 
-### Planned Features
-- Macro integration and creation
-- Belt export/import functionality
-- Advanced item filtering options
-- Multiple belt types (potions, scrolls, wands)
-- Custom UI themes
-- Analytics and usage tracking
+---
+
+## [1.1.0] - 2026-03-02
+
+### Added
+- Argon Combat HUD integration (initial)
+- World-level setting to enable/disable Argon integration
+- Debug mode client setting
+- Belt section injected into Actor sheets via `renderActorSheet` hook
 
 ## [2.0.0] - Planned
 
@@ -151,5 +150,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 **Last Updated**: March 2, 2026
-**Current Version**: 1.0.0
+**Current Version**: 1.2.0
 **Status**: Production Ready (GA Release)

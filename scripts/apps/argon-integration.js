@@ -1,110 +1,68 @@
-import { MODULE_ID, BELT_SLOTS } from "../constants.js";
+import { MODULE_ID } from "../constants.js";
 
 /**
  * RNK Quick Chug - Argon Combat HUD Integration
- * Injects Quick Chug belt items into the existing Bonus Action panel.
- * Only activates when enhancedcombathud is installed and active.
+ * Transforms the first belt-slot potion in Argon into a single
+ * "Quick Chug Belt" bonus-action button.  All other belt-slot items are hidden.
  */
 export function registerArgonIntegration() {
-  Hooks.on("argonInit", (CoreHud) => {
-    const { ActionButton } = CoreHud.ARGON.MAIN.BUTTONS;
+  // Track whether we already placed the belt button this render cycle.
+  let beltPlaced = false;
 
-    class QuickChugSlotButton extends ActionButton {
-      constructor(item) {
-        super();
-        this._item = item;
-      }
+  Hooks.on("renderItemButtonArgonComponent", (itemButton, element, actor) => {
+    if (!actor || !itemButton?.item?.id) return;
 
-      get label() {
-        return this._item?.name ?? "";
-      }
-
-      get icon() {
-        return this._item?.img ?? "icons/svg/item-bag.svg";
-      }
-
-      get quantity() {
-        const qty = this._item?.system?.quantity;
-        return Number.isNumeric(qty) ? qty : null;
-      }
-
-      get colorScheme() {
-        return 1;
-      }
-
-      async _onLeftClick() {
-        if (!this._item) {
-          return ui.notifications.info(
-            game.i18n.localize("rnk-quick-chug.notification.emptySlot")
-          );
-        }
-
-        try {
-          await this._item.use();
-        } catch (err) {
-          console.error(`[${MODULE_ID}] Failed to use item:`, err);
-          ui.notifications.error(
-            game.i18n.format("rnk-quick-chug.notification.failed", {
-              itemName: this._item.name
-            })
-          );
-        }
-      }
+    let slots;
+    try {
+      slots = actor.getFlag(MODULE_ID, "slots");
+    } catch {
+      return;
     }
+    if (!Array.isArray(slots)) return;
 
-    // Inject belt items into the existing bonus action panel after HUD renders
-    async function injectIntoBonusPanel(hud) {
-      const actor = hud?._actor;
-      if (!actor) {
-        return;
-      }
+    const beltIds = new Set(slots.filter((id) => typeof id === "string" && id.length > 0));
+    if (beltIds.size === 0) return;
+    if (!beltIds.has(itemButton.item.id)) return;
 
-      // Find the bonus action panel (colorScheme === 1)
-      const bonusPanel = hud.components?.main?.find(p => p.colorScheme === 1);
-      if (!bonusPanel) {
-        return;
-      }
+    // ── This item is in the belt ──────────────────────────────────────────
 
-      // Don't inject twice
-      if (bonusPanel.element?.querySelector(".qc-argon-belt")) {
-        return;
-      }
+    if (!beltPlaced) {
+      // Transform the first belt item into the belt button
+      beltPlaced = true;
+      // Reset after this render frame so the next HUD render starts fresh
+      requestAnimationFrame(() => { beltPlaced = false; });
 
-      const flagSlots = actor.getFlag(MODULE_ID, "slots") ?? Array(BELT_SLOTS).fill(null);
-      const items = flagSlots
-        .filter(id => id)
-        .map(id => actor.items.get(id))
-        .filter(Boolean);
+      // Swap icon to the belt icon
+      element.style.backgroundImage = `url("modules/enhancedcombathud/icons/drink-me.webp")`;
+      element.style.filter = "";
 
-      if (!items.length) {
-        return;
-      }
+      // Swap label
+      const title = element.querySelector(".feature-element-title");
+      if (title) title.textContent = game.i18n.localize("rnk-quick-chug.belt.label") || "Quick Chug Belt";
 
-      // Create belt buttons, render, and append to the bonus panel
-      for (const item of items) {
-        const btn = new QuickChugSlotButton(item);
-        btn._parent = bonusPanel;
-        btn.element.classList.add("qc-argon-belt");
-        bonusPanel.element.appendChild(btn.element);
-        await btn.render();
-      }
+      // Hide the quantity badge — the belt isn't a single item
+      const qty = element.querySelector("[class^='quantity']");
+      if (qty) qty.style.display = "none";
+
+      // Override click → open the belt app instead of using the potion
+      element.onmouseup = async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (event.button === 0) {
+          try {
+            if (globalThis.QC_ENGINE?.toggleApp) {
+              await globalThis.QC_ENGINE.toggleApp();
+            }
+          } catch (err) {
+            console.error(`[${MODULE_ID}] Failed to open belt:`, err);
+          }
+        }
+      };
+
+      console.log(`[${MODULE_ID}] Belt button placed in Argon HUD.`);
+    } else {
+      // Hide additional belt items — only one belt button needed
+      element.style.display = "none";
     }
-
-    // Hook into HUD render events
-    Hooks.on("renderApplication", (app) => {
-      if (app?.constructor?.name === "CoreHud") {
-        injectIntoBonusPanel(app);
-      }
-    });
-    Hooks.on("renderApplicationV2", (app) => {
-      if (app?.constructor?.name === "CoreHud") {
-        injectIntoBonusPanel(app);
-      }
-    });
-    Hooks.on("argon-onSetChangeComplete", (hud) => {
-      injectIntoBonusPanel(hud);
-    });
-
-    console.log(`[${MODULE_ID}] Argon Combat HUD integration registered.`);
   });
 }

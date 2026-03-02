@@ -19,5 +19,6 @@
   "rnk-quick-chug.settings.enableArgon.hint": "Mark quick chug potions as bonus actions in Argon Combat HUD",
   "rnk-quick-chug.settings.debugMode.name": "Debug Mode",
   "rnk-quick-chug.settings.debugMode.hint": "Log debug messages to console",
+  "rnk-quick-chug.belt.label": "Quick Chug Belt",
   "rnk-quick-chug.manifest": "RNK Quick Chug Module"
 }
