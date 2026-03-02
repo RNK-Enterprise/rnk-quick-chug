@@ -1,4 +1,4 @@
-import { MODULE_ID, BELT_SLOTS } from "../constants.js";
+import { MODULE_ID, BELT_SLOTS, useItemFree } from "../constants.js";
 
 /**
  * Belt Sheet Manager
@@ -93,7 +93,7 @@ export class BeltSheetManager {
     const id = slots[index];
     if (!id) return;
     const item = this.actor.items.get(id);
-    if (item) await item.use();
+    if (item) await useItemFree(item);
   }
 
   async setSlot(index, uuid) {

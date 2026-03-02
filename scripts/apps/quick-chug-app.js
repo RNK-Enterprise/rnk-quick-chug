@@ -1,4 +1,4 @@
-import { MODULE_ID, BELT_SLOTS } from "../constants.js";
+import { MODULE_ID, BELT_SLOTS, useItemFree } from "../constants.js";
 
 /**
  * RNK Quick Chug - Belt Quick Access
@@ -34,6 +34,7 @@ export class QuickChugApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
   constructor(options = {}) {
     super(options);
+    this._busy = false; // use-lock — prevents concurrent item.use() calls
   }
 
   /**
@@ -70,52 +71,69 @@ export class QuickChugApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
   _onRender(context, options) {
     const html = this.element;
+    const grid = html.querySelector(".qc-grid");
+    if (!grid) return;
 
-    html.querySelectorAll(".qc-slot").forEach(el => {
-      el.addEventListener("click", async (ev) => {
-        // Don't fire use if the clear button was clicked
-        if (ev.target.closest(".qc-clear-btn")) return;
-        const idx = ev.currentTarget.dataset.slotIndex;
-        await this._useSlot(Number(idx));
-      });
+    // ── Event delegation on the stable grid container ──────────────────────
+    // One listener per event type — never accumulates across re-renders.
 
-      el.addEventListener("dragover", (ev) => {
-        ev.preventDefault();
-      });
+    grid.addEventListener("click", async (ev) => {
+      const clearBtn = ev.target.closest(".qc-clear-btn");
+      const slot = ev.target.closest(".qc-slot");
+      if (!slot) return;
 
-      el.addEventListener("drop", async (ev) => {
-        ev.preventDefault();
-        const idx = ev.currentTarget.dataset.slotIndex;
-        try {
-          const data = JSON.parse(ev.dataTransfer.getData("text/plain"));
-          if (data.type === "Item") {
-            await this._setSlot(Number(idx), data.uuid);
-          }
-        } catch (err) {
-          console.error(`[${MODULE_ID}] Drop error:`, err);
-        }
-      });
+      if (clearBtn) {
+        ev.stopPropagation();
+        await this._setSlot(Number(slot.dataset.slotIndex), null);
+        return;
+      }
+
+      await this._useSlot(Number(slot.dataset.slotIndex));
     });
 
-    html.querySelectorAll(".qc-clear-btn").forEach(el => {
-      el.addEventListener("click", async (ev) => {
-        ev.stopPropagation();
-        const idx = ev.currentTarget.closest(".qc-slot").dataset.slotIndex;
-        await this._setSlot(Number(idx), null);
-      });
+    grid.addEventListener("dragover", (ev) => {
+      if (ev.target.closest(".qc-slot")) ev.preventDefault();
+    });
+
+    grid.addEventListener("drop", async (ev) => {
+      const slot = ev.target.closest(".qc-slot");
+      if (!slot) return;
+      ev.preventDefault();
+      try {
+        const data = JSON.parse(ev.dataTransfer.getData("text/plain"));
+        if (data.type === "Item") {
+          await this._setSlot(Number(slot.dataset.slotIndex), data.uuid);
+        }
+      } catch (err) {
+        console.error(`[${MODULE_ID}] Drop error:`, err);
+      }
     });
   }
 
   async _useSlot(index) {
-    const slots = this.actor.getFlag(MODULE_ID, "slots") || [];
-    const id = slots[index];
-    if (!id) return ui.notifications.info("This slot is empty.");
+    // Lock — one use at a time, prevents double-fire from event accumulation
+    // or rapid clicks consuming multiple potions in a single interaction.
+    if (this._busy) return;
+    this._busy = true;
+    try {
+      const slots = this.actor.getFlag(MODULE_ID, "slots") || [];
+      const id = slots[index];
+      if (!id) {
+        ui.notifications.info("This slot is empty.");
+        return;
+      }
 
-    const item = this.actor.items.get(id);
-    if (!item) return ui.notifications.error("Item no longer exists on actor.");
+      const item = this.actor.items.get(id);
+      if (!item) {
+        ui.notifications.error("Item no longer exists on actor.");
+        return;
+      }
 
-    await item.use();
-    this.render({ force: true });
+      await useItemFree(item);
+      this.render({ force: true });
+    } finally {
+      this._busy = false;
+    }
   }
 
   async _setSlot(index, uuid) {

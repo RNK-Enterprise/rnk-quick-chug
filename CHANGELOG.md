@@ -5,6 +5,12 @@ All notable changes to the RNK Quick Chug module will be documented in this file
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.3] - 2026-06-10
+
+### Fixed
+- Belt item use no longer consumes an action economy resource in Argon Combat HUD or the dnd5e combat tracker. A one-time `dnd5e.preUseActivity` hook intercepts the activation cost before `item.use()` fires and blanks the activation type, so action/bonus-action pips are not decremented. Quantity, chat card, and item effects still process normally.
+- Applied the same action-economy suppression to belt use via the actor sheet (BeltSheetManager).
+
 ## [1.0.0] - 2026-03-02
 
 ### Added
@@ -95,6 +101,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Requires modern browser with ES2021 support
 - No hotkey support yet (coming in v1.1.0)
 
+## [1.2.2] - 2026-03-02
+
+### Fixed
+- **Double potion consumption**: Using a belt slot could consume multiple potions of the same type simultaneously. Root cause was two compounding issues: (1) `addEventListener` was called on individual slot elements on every re-render — under Foundry v13's ApplicationV2 partial render paths, handlers stacked up causing one click to fire multiple times; (2) no concurrency guard meant rapid/duplicate click events could invoke `item.use()` more than once before the first call resolved.
+- Replaced per-element click/drag listeners with a single event-delegated listener on the stable `.qc-grid` container — eliminates all listener accumulation regardless of render frequency.
+- Added `_busy` lock to `_useSlot()` — only one use call can be in flight at a time; any re-entrant call returns immediately.
+
+---
+
 ## [1.2.1] - 2026-03-02
 
 ### Fixed
@@ -158,5 +173,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 **Last Updated**: March 2, 2026
-**Current Version**: 1.2.1
+**Current Version**: 1.2.2
 **Status**: Production Ready (GA Release)
