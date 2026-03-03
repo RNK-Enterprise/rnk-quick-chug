@@ -5,6 +5,12 @@ All notable changes to the RNK Quick Chug module will be documented in this file
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.6] - 2026-03-02
+
+### Fixed
+- **Action economy**: dnd5e's usage dialog was overriding the `consume.action = false` set in the `preUseActivity` hook — its "Spend Bonus Action?" checkbox submission ran after our fix and re-enabled the deduction. Fixed by also setting `dialogConfig.configure = false` in the hook so the dialog is skipped entirely. Belt use is now instant (no popup) and no action pip is spent.
+- **Belt won't reopen after use**: After using an item, Foundry's focus management could close the `QuickChugApp` while the dnd5e dialog was open. `toggleApp()` held a stale closed instance and calling `render()` on it silently failed. Fixed by always creating a fresh instance in `toggleApp()` when the current one is not rendered.
+
 ## [1.2.5] - 2026-03-02
 
 ### Fixed

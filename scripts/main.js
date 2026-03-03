@@ -26,11 +26,10 @@ class QuickChugEngine {
     if (this._appInstance?.rendered) {
       return this._appInstance.close();
     }
-
-    if (!this._appInstance) {
-      this._appInstance = new QuickChugApp();
-    }
-
+    // Always create a fresh instance when not rendered — the old one may have
+    // been closed by Foundry's focus management (e.g. while a dnd5e dialog was open)
+    // and calling render() on a closed ApplicationV2 instance can silently fail.
+    this._appInstance = new QuickChugApp();
     return this._appInstance.render({ force: true });
   }
 

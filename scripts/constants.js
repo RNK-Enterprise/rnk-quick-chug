@@ -16,14 +16,15 @@ export const BELT_SLOTS = 5;
  */
 export async function useItemFree(item) {
   let hookId;
-  hookId = Hooks.on("dnd5e.preUseActivity", (_activity, usageConfig) => {
+  hookId = Hooks.on("dnd5e.preUseActivity", (_activity, usageConfig, dialogConfig) => {
     Hooks.off("dnd5e.preUseActivity", hookId);
     hookId = null;
-    // dnd5e calls _prepareUsageConfig() BEFORE firing this hook, which means
-    // usageConfig.consume.action is already set to true for action/bonus items.
-    // Changing activation.type here is too late — we must directly override
-    // consume.action so dnd5e's consume() step skips the action-economy deduction
-    // while still processing quantity, chat card, and effects normally.
+    // Skip the configuration dialog — belt use should be instant with no popup.
+    // If the dialog runs, its "Spend Bonus Action?" checkbox submission overrides
+    // our consume.action=false below, so we must prevent it from showing.
+    if (dialogConfig) dialogConfig.configure = false;
+    // dnd5e calls _prepareUsageConfig() BEFORE firing this hook, so
+    // usageConfig.consume.action is already true. Override it directly.
     if (usageConfig.consume && typeof usageConfig.consume === "object") {
       usageConfig.consume.action = false;
     } else if (usageConfig.consume !== false) {
@@ -33,7 +34,6 @@ export async function useItemFree(item) {
   try {
     await item.use();
   } finally {
-    // Safety: remove hook if item.use() threw before preUseActivity fired.
     if (hookId != null) Hooks.off("dnd5e.preUseActivity", hookId);
   }
 }
